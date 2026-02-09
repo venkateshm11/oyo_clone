@@ -1,0 +1,41 @@
+{% extends 'utils/base.html' %}
+
+
+{% block start %}
+
+{% include 'utils/vendor_navbar.html' %}
+<div class="container mt-5">
+    <h1>Vendor Dashboard</h1>
+    <p>Welcome to the vendor dashboard! Here you can manage your properties, view bookings, and update your profile.</p>
+</div>
+<a href="{% url 'add_hotel' %}" class="text-center btn btn-primary">Add Hotel</a>
+
+<div class="container mt-5">
+    <h2>Your Hotels</h2>
+    <div class="row">
+        {% for hotel in hotels %}
+        <div class="col-md-4">
+            <div class="card mb-4 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">{{ hotel.hotel_name }}</h5>
+                    <p class="card-text">{{ hotel.hotel_description|truncatechars:100 }}</p>
+
+                    {% for amenetie in hotel.ameneties.all %}
+                        <span class="badge bg-primary">{{ amenetie.amenetie_name }}</span>
+                    {% endfor %}
+
+                </div>
+            </div>
+            <a href="{% url 'edit_hotel_image' hotel.id %}" class="btn btn-sm btn-outline-primary">Edit Image</a>
+            <a href="{% url 'delete_hotel' hotel.id %}" class="btn btn-sm btn-outline-danger">Delete Hotel</a>
+            <a href="{% url 'add_hotel_image' hotel.id %}" class="btn btn-sm btn-outline-success">Add Image</a>
+        </div>
+        {% endfor %}
+
+    </div>
+</div>
+
+    
+</div>
+
+{% endblock %}

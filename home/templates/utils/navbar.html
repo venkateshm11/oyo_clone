@@ -1,0 +1,24 @@
+{% extends 'utils/base.html' %}
+
+{% block start %}
+
+<nav class="navbar navbar-expand-lg bg-danger shadow">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#"><img height="60" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQZKOfiwliX-Wcoz6A8ahpujWBo-QI6P6lRKH7GHcm-lw&s" alt=""></a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+      <form class="d-flex" role="search">
+        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search"/>
+        <button class="btn btn-outline-success" type="submit">Search</button>
+      </form>
+      <div class="d-flex gap-3">
+        <button class="btn btn-outline-light" ><a href="{% url 'login' %}" style="text-decoration: none;">Login</a></button>
+        <button class="btn btn-outline-light"><a href="{% url 'register' %}" style="text-decoration: none;">Register</a></button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+
+{%endblock %}

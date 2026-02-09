@@ -1,0 +1,48 @@
+{% extends 'utils/base.html' %}
+
+
+{% block start %}
+
+{% include 'utils/vendor_navbar.html' %}
+<div class="container mt-5">
+    <h1>Add Hotel</h1>
+    <form method="POST" class="mt-4">
+        {% csrf_token %}
+        {% include 'utils/alerts.html' %}
+        <h2>ADD HOTEL</h2>
+        <div class="mb-3">
+            <label for="hotel_name" class="form-label">Hotel Name</label>
+            <input type="text" class="form-control" id="hotel_name" name="hotel_name" required>
+        </div>
+        <div class="mb-3">
+            <label for="hotel_description" class="form-label">Hotel Description</label>
+            <textarea class="form-control" id="hotel_description" name="hotel_description" rows="3" required></textarea>
+        </div>
+        <div class="mb-3">
+            <label for="hotel_ameneties" class="form-label">Hotel Ameneties</label>
+            <select multiple class="form-control" id="hotel_ameneties" name="hotel_ameneties">
+                {% for amenetie in ameneties %}
+                    <option value="{{ amenetie.id }}">{{ amenetie.amenetie_name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="hotel_price" class="form-label">Hotel Price</label>
+            <input type="number" class="form-control" id="hotel_price" name="hotel_price" required>
+        </div>
+        <div class="mb-3">
+            <label for="hotel_offer_price" class="form-label">Hotel Offer Price</label>
+            <input type="number" class="form-control" id="hotel_offer_price" name="hotel_offer_price" required>
+        </div>  
+        <div class="mb-3">
+            <label for="hotel_location" class="form-label">Hotel Location</label>
+            <input type="text" class="form-control" id="hotel_location" name="hotel_location" required>     
+        </div>
+
+        <div>
+            <button type="submit" class="btn btn-primary">Add Hotel</button>
+        </div>
+    </form>
+</div>
+
+{% endblock %}

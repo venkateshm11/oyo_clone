@@ -1,0 +1,22 @@
+{% extends 'utils/base.html' %}
+
+{% block start %}
+
+<div class="container mt-5">
+    <h3>Edit Image</h3>
+    <div class="mb-3">
+        <img src="{{ image.image.url }}" style="max-width:400px;max-height:300px;object-fit:cover;">
+    </div>
+
+    <form action="" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label class="form-label">Choose new image</label>
+            <input type="file" name="image" class="form-control" accept="image/*">
+        </div>
+        <button class="btn btn-primary" type="submit">Save</button>
+        <a href="{% url 'vendor_dashboard' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+
+{% endblock %}

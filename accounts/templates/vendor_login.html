@@ -1,0 +1,32 @@
+{% extends 'utils/base.html' %}
+
+{% block start %}
+
+<form method="POST" class="container align-items center shadow mt-5 p-5 bg-body rounded w-25">
+  {% csrf_token %}
+  {% include 'utils/alerts.html' %}
+    <h2 class="text-center">OYO VENDOR LOGIN</h2>
+  <div class="mb-3 ">
+    <label for="exampleInputEmail1" class="form-label">phone number</label>
+    <input type="text" id="phone_number" name="phone_number" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+    
+  </div>
+  <div class="mb-3">
+    <label for="exampleInputPassword1" class="form-label">Password</label>
+    <input type="password" name="password" class="form-control" id="exampleInputPassword1">
+  </div>
+
+  <div>
+    <p>Don't have an account? <a href="{% url 'vendor_register' %}">Register</a></p>
+  </div>
+  
+  <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+
+
+
+
+
+
+
+{% endblock%}

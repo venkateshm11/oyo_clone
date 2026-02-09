@@ -1,0 +1,16 @@
+{% extends 'utils/base.html' %}
+{% block start %}
+{% csrf_token %}
+{% include 'utils/alerts.html' %}
+<div class="container align-items center shadow mt-5 p-5 bg-body rounded w-25">
+    <h1 class="text-center">Verify OTP</h1>
+    <form method="POST">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="otp" class="form-label">Enter OTP</label>
+            <input type="text" name="otp" class="form-control" id="otp">
+        </div>
+        <button type="submit" class="btn btn-primary">Verify</button>
+    </form>
+</div>
+{% endblock %}
