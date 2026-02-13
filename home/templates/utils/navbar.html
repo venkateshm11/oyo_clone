@@ -1,24 +1,99 @@
-{% extends 'utils/base.html' %}
+{% load static %}
 
-{% block start %}
-
-<nav class="navbar navbar-expand-lg bg-danger shadow">
+<nav class="navbar navbar-expand-lg navbar-dark" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
   <div class="container-fluid">
-    <a class="navbar-brand" href="#"><img height="60" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQZKOfiwliX-Wcoz6A8ahpujWBo-QI6P6lRKH7GHcm-lw&s" alt=""></a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <!-- Logo -->
+    <a class="navbar-brand fw-bold" href="{% url 'index' %}" style="font-size: 24px; color: white;">
+      <img height="50" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQZKOfiwliX-Wcoz6A8ahpujWBo-QI6P6lRKH7GHcm-lw&s" alt="OYO" style="margin-right: 10px;">
+      OYO Stays
+    </a>
+    
+    <!-- Toggle button for mobile -->
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
-      <form class="d-flex" role="search">
-        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search"/>
-        <button class="btn btn-outline-success" type="submit">Search</button>
+
+    <!-- Navbar content -->
+    <div class="collapse navbar-collapse" id="navbarContent">
+      <!-- Search form -->
+      <form class="d-flex ms-auto me-3 mb-2 mb-lg-0" method="GET" action="{% url 'index' %}" role="search" style="width: 300px;">
+        <div class="input-group">
+          <input class="form-control" type="search" name="search" placeholder="Search hotels..." aria-label="Search" style="border-radius: 20px 0 0 20px;"/>
+          <button class="btn btn-light" type="submit" style="border-radius: 0 20px 20px 0; border: none;">
+            <i class="bi bi-search"></i> Search
+          </button>
+        </div>
       </form>
-      <div class="d-flex gap-3">
-        <button class="btn btn-outline-light" ><a href="{% url 'login' %}" style="text-decoration: none;">Login</a></button>
-        <button class="btn btn-outline-light"><a href="{% url 'register' %}" style="text-decoration: none;">Register</a></button>
+
+      <!-- Authentication buttons -->
+      <div class="d-flex gap-2 align-items-center">
+        {% if user.is_authenticated %}
+          <!-- User dropdown menu -->
+          <div class="dropdown">
+            <button class="btn btn-light dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="border-radius: 20px;">
+              <i class="bi bi-person-circle"></i> {{ user.first_name|default:user.username }}
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+              <li><h6 class="dropdown-header">{{ user.email }}</h6></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="{% url 'my_bookings' %}">
+                <i class="bi bi-calendar-check"></i> My Bookings
+              </a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item text-danger" href="{% url 'logout_view' %}">
+                <i class="bi bi-box-arrow-right"></i> Logout
+              </a></li>
+            </ul>
+          </div>
+        {% else %}
+          <!-- Login and Register buttons -->
+          <a href="{% url 'login' %}" class="btn btn-light" style="border-radius: 20px;">
+            <i class="bi bi-box-arrow-in-right"></i> Login
+          </a>
+          <a href="{% url 'register' %}" class="btn btn-outline-light" style="border-radius: 20px;">
+            <i class="bi bi-person-plus"></i> Register
+          </a>
+        {% endif %}
       </div>
     </div>
   </div>
 </nav>
 
-
-{%endblock %}
+<style>
+  .navbar {
+    padding: 12px 0;
+  }
+  
+  .navbar-brand {
+    display: flex;
+    align-items: center;
+    transition: all 0.3s ease;
+  }
+  
+  .navbar-brand:hover {
+    transform: scale(1.05);
+  }
+  
+  .btn-light {
+    color: #333 !important;
+    font-weight: 500;
+    transition: all 0.3s ease;
+  }
+  
+  .btn-light:hover {
+    background-color: white !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    transform: translateY(-2px);
+  }
+  
+  .form-control:focus, .btn:focus {
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.25);
+    border-color: #667eea;
+  }
+  
+  .dropdown-menu {
+    border-radius: 10px;
+    border: none;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  }
+</style>

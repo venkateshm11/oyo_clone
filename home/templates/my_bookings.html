@@ -1,0 +1,124 @@
+{% extends 'utils/base.html' %}
+
+{% block title %}My Bookings - OYO Stays{% endblock %}
+
+{% block start %}
+
+{% include 'utils/navbar.html' %}
+{% include 'utils/alerts.html' %}
+
+<div style="background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%); padding: 40px 20px;">
+    <div class="container">
+        <div class="mb-4">
+            <h1 class="section-title" style="display: inline-block;">
+                <i class="bi bi-list-check"></i> My Bookings
+            </h1>
+        </div>
+        
+        {% if bookings %}
+            <div class="row">
+                {% for booking in bookings %}
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <div class="card h-100 overflow-hidden">
+                            <!-- Hotel Image -->
+                            <div style="position: relative; height: 200px; background: #e9ecef; overflow: hidden;">
+                                {% if booking.hotel.hotel_images.all %}
+                                    <img src="{{ booking.hotel.hotel_images.first.image.url }}" alt="{{ booking.hotel.hotel_name }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                {% else %}
+                                    <div style="display: flex; align-items: center; justify-content: center; height: 100%;">
+                                        <i class="bi bi-image" style="font-size: 60px; color: #adb5bd;"></i>
+                                    </div>
+                                {% endif %}
+                                
+                                <!-- Status Badge -->
+                                <div style="position: absolute; top: 12px; right: 12px;">
+                                    {% if booking.booking_status == 'pending' %}
+                                        <span class="badge badge-warning">
+                                            <i class="bi bi-hourglass"></i> Pending
+                                        </span>
+                                    {% elif booking.booking_status == 'confirmed' %}
+                                        <span class="badge badge-success">
+                                            <i class="bi bi-check-circle"></i> Confirmed
+                                        </span>
+                                    {% elif booking.booking_status == 'cancelled' %}
+                                        <span class="badge badge-danger">
+                                            <i class="bi bi-x-circle"></i> Cancelled
+                                        </span>
+                                    {% elif booking.booking_status == 'completed' %}
+                                        <span class="badge badge-info">
+                                            <i class="bi bi-check2-all"></i> Completed
+                                        </span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <!-- Booking Info -->
+                            <div class="card-body">
+                                <h5 class="card-title mb-2" style="color: #2d3748; font-weight: 600;">
+                                    {{ booking.hotel.hotel_name }}
+                                </h5>
+                                
+                                <p class="card-text small mb-3" style="color: #667eea;">
+                                    <i class="bi bi-geo-alt-fill"></i> {{ booking.hotel.hotel_location }}
+                                </p>
+                                
+                                <!-- Dates -->
+                                <div class="mb-3 p-2" style="background: #f0f9ff; border-radius: 8px;">
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <small class="text-muted">Check-in</small>
+                                        <small class="fw-bold">{{ booking.check_in_date|date:"d M Y" }}</small>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <small class="text-muted">Check-out</small>
+                                        <small class="fw-bold">{{ booking.check_out_date|date:"d M Y" }}</small>
+                                    </div>
+                                </div>
+                                
+                                <!-- Room and Guest Info -->
+                                <div class="d-flex justify-content-between mb-3" style="border-top: 1px solid #e5e7eb; padding-top: 12px;">
+                                    <div>
+                                        <small class="text-muted d-block">Rooms</small>
+                                        <strong>{{ booking.number_of_rooms }}</strong>
+                                    </div>
+                                    <div>
+                                        <small class="text-muted d-block">Guests</small>
+                                        <strong>{{ booking.number_of_guests }}</strong>
+                                    </div>
+                                    <div class="text-end">
+                                        <small class="text-muted d-block">Total Price</small>
+                                        <strong style="color: #667eea; font-size: 18px;">₹{{ booking.total_price|floatformat:0 }}</strong>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Actions -->
+                            <div class="card-footer bg-white border-0 p-3">
+                                <a href="{% url 'booking_detail' booking.id %}" class="btn btn-primary btn-sm w-100 mb-2">
+                                    <i class="bi bi-eye"></i> View Details
+                                </a>
+                                {% if booking.booking_status != 'cancelled' and booking.booking_status != 'completed' %}
+                                    <a href="{% url 'cancel_booking' booking.id %}" class="btn btn-outline-danger btn-sm w-100" onclick="return confirm('Are you sure you want to cancel this booking?')">
+                                        <i class="bi bi-trash"></i> Cancel
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="text-center py-5">
+                <div style="font-size: 80px; margin-bottom: 20px; color: #c7d2e0;">
+                    <i class="bi bi-inbox"></i>
+                </div>
+                <h4>No bookings yet</h4>
+                <p class="text-muted mb-4">Start exploring and making your first booking!</p>
+                <a href="{% url 'index' %}" class="btn btn-primary" style="border-radius: 20px;">
+                    <i class="bi bi-building"></i> Browse Hotels
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

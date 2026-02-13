@@ -1,0 +1,66 @@
+{% extends 'utils/base.html' %}
+
+{% block start %}
+
+<div class="container mt-5">
+    <h2>Edit Hotel Details</h2>
+    
+    <form action="" method="post">
+        {% csrf_token %}
+        
+        <div class="mb-3">
+            <label for="hotel_name" class="form-label">Hotel Name</label>
+            <input type="text" id="hotel_name" name="hotel_name" class="form-control" value="{{ hotel.hotel_name }}" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="hotel_description" class="form-label">Description</label>
+            <textarea id="hotel_description" name="hotel_description" class="form-control" rows="4" required>{{ hotel.hotel_description }}</textarea>
+        </div>
+
+        <div class="mb-3">
+            <label for="hotel_location" class="form-label">Location</label>
+            <input type="text" id="hotel_location" name="hotel_location" class="form-control" value="{{ hotel.hotel_location }}" required>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="hotel_price" class="form-label">Price</label>
+                <input type="number" id="hotel_price" name="hotel_price" class="form-control" value="{{ hotel.hotel_price }}" required step="0.01">
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label for="hotel_offer_price" class="form-label">Offer Price</label>
+                <input type="number" id="hotel_offer_price" name="hotel_offer_price" class="form-control" value="{{ hotel.hotel_offer_price }}" step="0.01">
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Select Amenities</label>
+            <div class="amenities-list">
+                {% for ameneties_item in ameneties %}
+                <div class="form-check">
+                    <input 
+                        type="checkbox" 
+                        id="amenity_{{ ameneties_item.id }}" 
+                        name="hotel_ameneties" 
+                        value="{{ ameneties_item.id }}" 
+                        class="form-check-input"
+                        {% if ameneties_item in hotel.ameneties.all %}checked{% endif %}
+                    >
+                    <label class="form-check-label" for="amenity_{{ ameneties_item.id }}">
+                        {{ ameneties_item.name }}
+                    </label>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+            <a href="{% url 'vendor_dashboard' %}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+
+{% endblock %}

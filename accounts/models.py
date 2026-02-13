@@ -51,3 +51,31 @@ class HotelManager(models.Model):
     hotel = models.ForeignKey(Hotel, on_delete=models.CASCADE, related_name='managers')
     manager_name = models.CharField(max_length=200)
     manager_contact = models.CharField(max_length=15)
+
+
+class Booking(models.Model):
+    BOOKING_STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('confirmed', 'Confirmed'),
+        ('cancelled', 'Cancelled'),
+        ('completed', 'Completed'),
+    ]
+    
+    guest = models.ForeignKey(HotelUser, on_delete=models.CASCADE, related_name='bookings')
+    hotel = models.ForeignKey(Hotel, on_delete=models.CASCADE, related_name='bookings')
+    check_in_date = models.DateField()
+    check_out_date = models.DateField()
+    number_of_rooms = models.PositiveIntegerField(default=1)
+    number_of_guests = models.PositiveIntegerField(default=1)
+    total_price = models.FloatField()
+    booking_status = models.CharField(max_length=20, choices=BOOKING_STATUS_CHOICES, default='pending')
+    special_requests = models.TextField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+        return f"Booking: {self.guest.first_name} - {self.hotel.hotel_name}"
+    
+    class Meta:
+        ordering = ['-created_at']
+

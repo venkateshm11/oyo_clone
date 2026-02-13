@@ -1,0 +1,36 @@
+{% extends 'utils/base.html' %}
+
+{% block start %}
+
+{% include 'utils/navbar.html' %}
+
+<div class="container mt-4">
+    <form class="d-flex mb-4" method="get">
+        <input class="form-control me-2" type="search" placeholder="Search hotels" aria-label="Search" name="q" value="{{ query }}">
+        <button class="btn btn-outline-success" type="submit">Search</button>
+    </form>
+
+    <div class="row">
+        {% for hotel in hotels %}
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    {% with img=hotel.hotel_images.first %}
+                        {% if img %}
+                            <img src="{{ img.image.url }}" class="card-img-top" style="height:180px;object-fit:cover;">
+                        {% endif %}
+                    {% endwith %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ hotel.hotel_name }}</h5>
+                        <p class="card-text">{{ hotel.hotel_description|truncatechars:100 }}</p>
+                        <p class="mb-1"><strong>Price:</strong> {{ hotel.hotel_price }}</p>
+                        <a href="{% url 'hotel_detail' hotel.id %}" class="btn btn-primary">View</a>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <p>No hotels found.</p>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}

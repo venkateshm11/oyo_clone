@@ -1,6 +1,6 @@
 
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login,logout
 from django.db import IntegrityError
 from accounts.models import Hotel, HotelUser, HotelVendor, Ameneties, HotelImages
 from django.contrib import messages
@@ -211,7 +211,7 @@ def vendor_login(request):
 
         login(request, user)
         messages.success(request, 'Vendor login successful')
-        return render(request, 'vendor_dashboard.html')
+        return redirect('vendor_dashboard')
     
 
     return render(request, 'vendor_login.html')
@@ -266,7 +266,7 @@ def add_hotel(request):
             hotel_obj.save()
         
         
-        messages.success(request, 'Hotel added successfully')
+        messages.success(request, 'Hotel added successfully', extra_tags='hotel')
         return redirect('vendor_dashboard')
     
 
@@ -285,47 +285,46 @@ def add_hotel_image(request, hotel_id):
     if request.method == 'POST':
         image = request.FILES.get('image')
         if not image:
-            messages.error(request, 'No image uploaded')
+            messages.error(request, 'No image uploaded', extra_tags='hotel')
             return redirect('vendor_dashboard')
 
         HotelImages.objects.create(hotel_owner=hotel, image=image)
-        messages.success(request, 'Image added successfully')
+        messages.success(request, 'Image added successfully', extra_tags='hotel')
         return redirect('vendor_dashboard')
 
     return redirect('vendor_dashboard')
 
 
+    return render(request, 'edit_hotel_image.html', {'image': img})
 @login_required(login_url='vendor_login')
-def edit_hotel_image(request, hotel_id):
+def edit_hotel(request, hotel_id): 
     hotel = get_object_or_404(Hotel, id=hotel_id)
-
     if hotel.hotel_owner.id != request.user.id:
-        messages.error(request, 'You do not have permission to modify this hotel')
-        return redirect('vendor_dashboard')
-
-    img = hotel.hotel_images.first()
-    if not img:
-        messages.info(request, 'No image to edit. Please add an image first.')
+        messages.error(request, 'You do not have permission to edit this hotel')
         return redirect('vendor_dashboard')
 
     if request.method == 'POST':
-        new_image = request.FILES.get('image')
-        if not new_image:
-            messages.error(request, 'No image uploaded')
-            return redirect('edit_hotel_image', hotel_id=hotel_id)
-
-        # delete previous file from storage and replace
-        try:
-            img.image.delete(save=False)
-        except Exception:
-            pass
-        img.image = new_image
-        img.save()
-        messages.success(request, 'Image updated successfully')
+        hotel_name = request.POST.get('hotel_name')
+        hotel_description = request.POST.get('hotel_description')
+        hotel_price = request.POST.get('hotel_price')
+        ameneties = request.POST.getlist('hotel_ameneties') # assuming this is a list of amenetie IDs
+        hotel_offer_price = request.POST.get('hotel_offer_price')
+        hotel_location = request.POST.get('hotel_location') # assuming this is a list of amenetie IDs
+        hotel.hotel_name = hotel_name
+        hotel.hotel_description = hotel_description
+        hotel.hotel_price = hotel_price
+        hotel.hotel_offer_price = hotel_offer_price
+        hotel.hotel_location = hotel_location
+        hotel.ameneties.set(Ameneties.objects.filter(id__in=ameneties))
+        hotel.save()
+        messages.success(request, 'Hotel updated successfully', extra_tags='hotel')
         return redirect('vendor_dashboard')
 
-    return render(request, 'edit_hotel_image.html', {'image': img})
-
+    context = {
+        'hotel': hotel,
+        'ameneties': Ameneties.objects.all(),
+    }
+    return render(request, 'edit_hotel.html', context)
 
 @login_required(login_url='vendor_login')
 def delete_hotel(request, hotel_id):
@@ -336,8 +335,14 @@ def delete_hotel(request, hotel_id):
 
     if request.method == 'POST':
         hotel.delete()
-        messages.success(request, 'Hotel deleted')
+        messages.success(request, 'Hotel deleted', extra_tags='hotel')
         return redirect('vendor_dashboard')
 
     # If GET, show a simple confirm page or redirect back
     return redirect('vendor_dashboard')
+
+@login_required(login_url='vendor_login')
+def logout_view(request):
+    logout(request)
+    messages.success(request, 'Logged out successfully')
+    return redirect('index')

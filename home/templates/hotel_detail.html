@@ -1,0 +1,173 @@
+{% extends 'utils/base.html' %}
+
+{% block title %}{{ hotel.hotel_name }} - OYO Stays{% endblock %}
+
+{% block start %}
+
+{% include 'utils/navbar.html' %}
+{% include 'utils/alerts.html' %}
+
+<div class="container-fluid" style="background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%); padding: 40px 20px;">
+    <div class="container">
+        <div class="row">
+            <!-- Hotel Images -->
+            <div class="col-lg-7">
+                <div class="card p-0 mb-4" style="overflow: hidden;">
+                    {% if images %}
+                        <div id="hotelCarousel" class="carousel slide" data-bs-ride="carousel">
+                            <div class="carousel-inner" style="height: 400px;">
+                                {% for img in images %}
+                                    <div class="carousel-item {% if forloop.first %}active{% endif %}" style="height: 100%;">
+                                        <img src="{{ img.image.url }}" class="d-block w-100" style="height: 100%; object-fit: cover;" alt="Hotel image">
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            {% if images|length > 1 %}
+                                <button class="carousel-control-prev" type="button" data-bs-target="#hotelCarousel" data-bs-slide="prev">
+                                    <span class="carousel-control-prev-icon"></span>
+                                </button>
+                                <button class="carousel-control-next" type="button" data-bs-target="#hotelCarousel" data-bs-slide="next">
+                                    <span class="carousel-control-next-icon"></span>
+                                </button>
+                            {% endif %}
+                        </div>
+                    {% else %}
+                        <div style="height: 400px; background: #e9ecef; display: flex; align-items: center; justify-content: center;">
+                            <i class="bi bi-image" style="font-size: 80px; color: #adb5bd;"></i>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Hotel Info -->
+                <div class="card p-4 mb-4">
+                    <h1 class="mb-3" style="color: #2d3748;">{{ hotel.hotel_name }}</h1>
+                    
+                    <div class="mb-3 pb-3" style="border-bottom: 1px solid #e5e7eb;">
+                        <p class="text-muted mb-2">
+                            <i class="bi bi-geo-alt-fill" style="color: #667eea;"></i>
+                            <strong>{{ hotel.hotel_location }}</strong>
+                        </p>
+                        <p style="font-size: 16px; line-height: 1.6;">{{ hotel.hotel_description }}</p>
+                    </div>
+
+                    <!-- Price Section -->
+                    <div class="mb-4 p-3" style="background: #f0f9ff; border-radius: 12px; border-left: 4px solid #667eea;">
+                        <div class="row">
+                            <div class="col-6">
+                                <p class="text-muted mb-1"><small>Price per night</small></p>
+                                {% if hotel.hotel_offer_price %}
+                                    <div>
+                                        <s class="text-muted" style="font-size: 18px;">₹{{ hotel.hotel_price|floatformat:0 }}</s>
+                                        <h4 style="color: #667eea; margin: 0;">₹{{ hotel.hotel_offer_price|floatformat:0 }}</h4>
+                                    </div>
+                                {% else %}
+                                    <h4 style="color: #667eea; margin: 0;">₹{{ hotel.hotel_price|floatformat:0 }}</h4>
+                                {% endif %}
+                            </div>
+                            <div class="col-6 text-end">
+                                {% if hotel.hotel_offer_price %}
+                                    <span class="badge" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); font-size: 14px; padding: 8px 12px;">
+                                        <i class="bi bi-lightning-fill"></i> Special Offer
+                                    </span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Amenities -->
+                    {% if hotel.ameneties.all %}
+                        <div>
+                            <h5 class="mb-3" style="color: #2d3748;">
+                                <i class="bi bi-star-fill" style="color: #f59e0b;"></i> Amenities
+                            </h5>
+                            <div class="row">
+                                {% for amenity in hotel.ameneties.all %}
+                                    <div class="col-md-6 mb-3">
+                                        <div class="d-flex align-items-center p-2">
+                                            {% if amenity.icon %}
+                                                <img src="{{ amenity.icon.url }}" style="max-width: 32px; max-height: 32px; margin-right: 12px;">
+                                            {% else %}
+                                                <i class="bi bi-check-circle-fill me-2" style="font-size: 20px; color: #22c55e;"></i>
+                                            {% endif %}
+                                            <span>{{ amenity.amenetie_name }}</span>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Booking Card -->
+            <div class="col-lg-5">
+                <div class="card p-4" style="position: sticky; top: 100px; box-shadow: 0 8px 24px rgba(102, 126, 234, 0.2);">
+                    {% if user.is_authenticated %}
+                        <h4 class="mb-4" style="color: #2d3748;">
+                            <i class="bi bi-calendar-check"></i> Complete Your Booking
+                        </h4>
+                        
+                        <form method="post" action="{% url 'create_booking' hotel.hotel_slug %}">
+                            {% csrf_token %}
+                            
+                            <div class="mb-3">
+                                <label class="form-label"><i class="bi bi-calendar-event"></i> Check-in Date</label>
+                                {{ booking_form.check_in_date }}
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label"><i class="bi bi-calendar-event"></i> Check-out Date</label>
+                                {{ booking_form.check_out_date }}
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="mb-3">
+                                        <label class="form-label"><i class="bi bi-door-closed"></i> Rooms</label>
+                                        {{ booking_form.number_of_rooms }}
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="mb-3">
+                                        <label class="form-label"><i class="bi bi-people"></i> Guests</label>
+                                        {{ booking_form.number_of_guests }}
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label"><i class="bi bi-chat-dots"></i> Special Requests (Optional)</label>
+                                {{ booking_form.special_requests }}
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary w-100 mb-2" style="padding: 12px; font-size: 16px; font-weight: 600;">
+                                <i class="bi bi-credit-card"></i> Book Now
+                            </button>
+                            
+                            <a href="{% url 'my_bookings' %}" class="btn btn-outline-primary w-100">
+                                <i class="bi bi-list-check"></i> My Bookings
+                            </a>
+                        </form>
+                    {% else %}
+                        <div class="text-center">
+                            <div style="font-size: 60px; margin-bottom: 20px;">
+                                <i class="bi bi-lock" style="color: #667eea;"></i>
+                            </div>
+                            <h5 class="mb-3">Sign in to book</h5>
+                            <p class="text-muted mb-4">Create an account or login to complete your booking</p>
+                            
+                            <a href="{% url 'register' %}" class="btn btn-primary w-100 mb-2" style="padding: 12px; font-weight: 600;">
+                                <i class="bi bi-person-plus"></i> Create Account
+                            </a>
+                            <a href="{% url 'login' %}" class="btn btn-outline-primary w-100" style="padding: 12px; font-weight: 600;">
+                                <i class="bi bi-box-arrow-in-right"></i> Login
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,70 @@
+{% extends 'utils/base.html' %}
+
+{% block title %}Edit {{ hotel.hotel_name }} - Vendor Dashboard{% endblock %}
+
+{% block start %}
+
+{% include 'utils/vendor_navbar.html' %}
+{% include 'utils/alerts.html' %}
+
+<div class="container mt-5">
+    <h2>Edit Hotel</h2>
+    <form method="POST" class="mt-4" action="{% url 'edit_hotel' hotel.id %}">
+        {% csrf_token %}
+
+        <div class="mb-3">
+            <label for="hotel_name" class="form-label">Hotel Name</label>
+            <input type="text" class="form-control" id="hotel_name" name="hotel_name" value="{{ hotel.hotel_name }}" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="hotel_description" class="form-label">Hotel Description</label>
+            <textarea class="form-control" id="hotel_description" name="hotel_description" rows="4" required>{{ hotel.hotel_description }}</textarea>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Hotel Amenities</label>
+            <div class="row">
+                {% for amen in ameneties %}
+                    <div class="col-md-4 mb-2">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="{{ amen.id }}" id="amen_{{ amen.id }}" name="hotel_ameneties"
+                                {% if amen in hotel.ameneties.all %}checked{% endif %}>
+                            <label class="form-check-label d-flex align-items-center" for="amen_{{ amen.id }}">
+                                {% if amen.icon %}
+                                    <img src="{{ amen.icon.url }}" alt="{{ amen.amenetie_name }}" style="width:28px;height:28px;margin-right:8px;object-fit:cover;">
+                                {% else %}
+                                    <i class="bi bi-check2-circle me-2" style="font-size:18px;color:#667eea;"></i>
+                                {% endif %}
+                                <span>{{ amen.amenetie_name }}</span>
+                            </label>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            <small class="text-muted">Select the amenities available at this hotel.</small>
+        </div>
+
+        <div class="mb-3">
+            <label for="hotel_price" class="form-label">Hotel Price</label>
+            <input type="number" class="form-control" id="hotel_price" name="hotel_price" value="{{ hotel.hotel_price }}" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="hotel_offer_price" class="form-label">Hotel Offer Price (optional)</label>
+            <input type="number" class="form-control" id="hotel_offer_price" name="hotel_offer_price" value="{{ hotel.hotel_offer_price }}">
+        </div>
+
+        <div class="mb-3">
+            <label for="hotel_location" class="form-label">Hotel Location</label>
+            <input type="text" class="form-control" id="hotel_location" name="hotel_location" value="{{ hotel.hotel_location }}" required>
+        </div>
+
+        <div>
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+            <a href="{% url 'vendor_dashboard' %}" class="btn btn-outline-secondary ms-2">Cancel</a>
+        </div>
+    </form>
+</div>
+
+{% endblock %}
